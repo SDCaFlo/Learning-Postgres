@@ -1,0 +1,44 @@
+
+services:
+  myDB:
+    image: postgres:15.3
+    container_name: my-database
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=alumno
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=course-db
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - my-network
+  
+  pdAdmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4
+    restart: always
+    depends_on:
+      - myDB
+    ports:
+      - 8080:80
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=alumno@google.com
+      - PGADMIN_DEFAULT_PASSWORD=123456
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin  # Volumen de Docker para pgAdmin
+      - pgadmin_certs:/certs  # Volumen para certificados
+      - pgadmin_config:/pgadmin4  # Volumen para configuración
+    networks:
+      - my-network
+
+networks:
+  my-network:
+  
+volumes:
+  postgres_data:  # Volumen para PostgreSQL
+  pgadmin_data:   # Volumen para pgAdmin
+  pgadmin_certs:  # Volumen para certificados
+  pgadmin_config: # Volumen para configuración de pgAdmin
